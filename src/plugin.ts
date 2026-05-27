@@ -114,6 +114,12 @@ export const createKiroPlugin =
               limit: { context: 200000, output: 64000 },
               modalities: { input: ['text', 'image', 'pdf'], output: ['text'] }
             },
+            // Claude Sonnet
+            'claude-sonnet-4': {
+              name: 'Claude Sonnet 4.0 (1.3x)',
+              limit: { context: 200000, output: 64000 },
+              modalities: { input: ['text', 'image', 'pdf'], output: ['text'] }
+            },
             'claude-sonnet-4-5': {
               name: 'Claude Sonnet 4.5 (1.3x)',
               limit: { context: 200000, output: 64000 },
@@ -124,16 +130,13 @@ export const createKiroPlugin =
               limit: { context: 1000000, output: 64000 },
               modalities: { input: ['text', 'image', 'pdf'], output: ['text'] }
             },
-            'claude-sonnet-4': {
-              name: 'Claude Sonnet 4.0 (1.3x)',
-              limit: { context: 200000, output: 64000 },
-              modalities: { input: ['text', 'image', 'pdf'], output: ['text'] }
-            },
+            // Claude Haiku
             'claude-haiku-4-5': {
               name: 'Claude Haiku 4.5 (0.4x)',
               limit: { context: 200000, output: 64000 },
               modalities: { input: ['text', 'image'], output: ['text'] }
             },
+            // Claude Opus
             'claude-opus-4-5': {
               name: 'Claude Opus 4.5 (2.2x)',
               limit: { context: 200000, output: 64000 },
@@ -148,6 +151,17 @@ export const createKiroPlugin =
               name: 'Claude Opus 4.7 (2.2x)',
               limit: { context: 1000000, output: 64000 },
               modalities: { input: ['text', 'image', 'pdf'], output: ['text'] }
+            },
+            // Open weight models
+            'deepseek-3.2': {
+              name: 'DeepSeek 3.2 (0.25x)',
+              limit: { context: 128000, output: 64000 },
+              modalities: { input: ['text'], output: ['text'] }
+            },
+            'glm-5': {
+              name: 'GLM-5 (0.5x)',
+              limit: { context: 200000, output: 64000 },
+              modalities: { input: ['text'], output: ['text'] }
             },
             'minimax-m2.5': {
               name: 'MiniMax M2.5 (0.25x)',
