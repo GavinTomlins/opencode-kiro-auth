@@ -7,7 +7,7 @@ import * as logger from '../../plugin/logger'
 import { transformToSdkRequest } from '../../plugin/request'
 import { createSdkClient } from '../../plugin/sdk-client'
 import { syncFromKiroCli } from '../../plugin/sync/kiro-cli'
-import type { KiroAuthDetails, ManagedAccount, SdkPreparedRequest } from '../../plugin/types'
+import type { Effort, KiroAuthDetails, ManagedAccount, SdkPreparedRequest } from '../../plugin/types'
 import { AccountSelector } from '../account/account-selector'
 import { UsageTracker } from '../account/usage-tracker'
 import { TokenRefresher } from '../auth/token-refresher'
@@ -134,7 +134,7 @@ export class RequestHandler {
       }
 
       try {
-        const client = createSdkClient(auth, sdkPrep.region)
+        const client = createSdkClient(auth, sdkPrep.region, sdkPrep.effort)
         const command = new GenerateAssistantResponseCommand({
           conversationState: sdkPrep.conversationState as any,
           profileArn: sdkPrep.profileArn
@@ -219,7 +219,10 @@ export class RequestHandler {
     budget: number,
     showToast?: (message: string, variant: 'info' | 'warning' | 'success' | 'error') => void
   ): SdkPreparedRequest {
-    return transformToSdkRequest(body, model, auth, think, budget, showToast)
+    return transformToSdkRequest(body, model, auth, think, budget, showToast, {
+      effort: this.config.effort,
+      autoEffortMapping: this.config.auto_effort_mapping
+    })
   }
 
   private handleSuccessfulRequest(acc: ManagedAccount): void {
