@@ -48,6 +48,9 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "typescript": "^5.7.3"
   },
+  "overrides": {
+    "yaml": "^2.8.3"
+  },
   "opencode": {
     "type": "plugin",
     "hooks": [
