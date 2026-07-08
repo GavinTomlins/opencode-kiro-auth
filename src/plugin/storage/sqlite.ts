@@ -1,6 +1,6 @@
 import type Libsql from 'libsql'
 import Database from 'libsql'
-import { existsSync, mkdirSync } from 'node:fs'
+import { chmodSync, existsSync, mkdirSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import type { ManagedAccount } from '../types'
@@ -23,9 +23,16 @@ export class KiroDatabase {
   constructor(path: string = DB_PATH) {
     this.path = path
     const dir = join(path, '..')
-    if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true, mode: 0o700 })
     this.db = new Database(path)
     this.db.pragma('busy_timeout = 5000')
+    // The DB holds plaintext access/refresh tokens and client secrets; keep it
+    // owner-only. chmod is a no-op on Windows, so failures are non-fatal.
+    try {
+      chmodSync(path, 0o600)
+    } catch {
+      // ignore (e.g. Windows / unsupported fs)
+    }
     this.init()
   }
   private init() {

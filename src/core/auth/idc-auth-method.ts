@@ -1,5 +1,5 @@
 import type { AuthOuathResult } from '@opencode-ai/plugin'
-import { exec } from 'node:child_process'
+import { execFile } from 'node:child_process'
 import { extractRegionFromArn, normalizeRegion } from '../../constants.js'
 import type { AccountRepository } from '../../infrastructure/database/account-repository.js'
 import { authorizeKiroIDC, pollKiroIDCToken } from '../../kiro/oauth-idc.js'
@@ -11,17 +11,23 @@ import type { KiroRegion, ManagedAccount } from '../../plugin/types.js'
 import { fetchUsageLimits } from '../../plugin/usage.js'
 
 const openBrowser = (url: string) => {
-  const escapedUrl = url.replace(/"/g, '\\"')
-  const platform = process.platform
-  const cmd =
-    platform === 'win32'
-      ? `cmd /c start "" "${escapedUrl}"`
-      : platform === 'darwin'
-        ? `open "${escapedUrl}"`
-        : `xdg-open "${escapedUrl}"`
-  exec(cmd, (error) => {
+  const onError = (error: Error | null) => {
     if (error) logger.warn(`Browser error: ${error.message}`)
-  })
+  }
+  // Pass the URL as a discrete argv element (no shell) so it can never be
+  // interpreted as a command. `open`/`xdg-open` are real executables; on
+  // Windows the URL is handed to `start` as a separate, quoted argument.
+  switch (process.platform) {
+    case 'win32':
+      execFile('cmd', ['/c', 'start', '', url], onError)
+      break
+    case 'darwin':
+      execFile('open', [url], onError)
+      break
+    default:
+      execFile('xdg-open', [url], onError)
+      break
+  }
 }
 
 function normalizeStartUrl(raw: string | undefined): string | undefined {
