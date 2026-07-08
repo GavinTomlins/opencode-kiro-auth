@@ -85,14 +85,6 @@ export function logApiResponse(data: any, timestamp: string): void {
   writeApiLog('response', data, timestamp)
 }
 
-export function logApiError(requestData: any, responseData: any, timestamp: string): void {
-  writeApiLog('request', requestData, timestamp, true)
-  writeApiLog('response', responseData, timestamp, true)
-  const errorType = responseData.status ? `HTTP ${responseData.status}` : 'Network Error'
-  const email = requestData.email || 'unknown'
-  error(`${errorType} on ${email} - See error_${timestamp}_request.json`)
-}
-
 export function getTimestamp(): string {
   return new Date().toISOString().replace(/[:.]/g, '-')
 }

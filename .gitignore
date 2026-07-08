@@ -5,3 +5,7 @@ dist/
 *.tsbuildinfo
 .vscode/*
 .sisyphus
+
+# Local Kiro runtime data — never commit (credential DB holds plaintext tokens)
+*.db
+kiro-logs/

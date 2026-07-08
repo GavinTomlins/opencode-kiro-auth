@@ -164,7 +164,7 @@ export class RequestHandler {
 
         if (httpStatus) {
           if (apiTimestamp) {
-            this.logSdkError(sdkPrep, e, acc, apiTimestamp)
+            this.logSdkError(sdkPrep, e, apiTimestamp)
           }
 
           const mockResponse = new Response(
@@ -277,12 +277,10 @@ export class RequestHandler {
     )
   }
 
-  private logSdkError(
-    prep: SdkPreparedRequest,
-    error: any,
-    acc: ManagedAccount,
-    apiTimestamp: string
-  ): void {
+  private logSdkError(prep: SdkPreparedRequest, error: any, apiTimestamp: string): void {
+    // Only reached when enable_log_api_request is on (the call site gates on the
+    // same timestamp), so the request was already written by logSdkRequest and we
+    // just record the error response under the same timestamp.
     const status = error?.$metadata?.httpStatusCode || 0
     const rData = {
       status,
@@ -292,23 +290,7 @@ export class RequestHandler {
       conversationId: prep.conversationId,
       model: prep.effectiveModel
     }
-    if (!this.config.enable_log_api_request) {
-      logger.logApiError(
-        {
-          url: `https://q.${prep.region}.amazonaws.com/generateAssistantResponse`,
-          method: 'POST',
-          headers: {},
-          body: null,
-          conversationId: prep.conversationId,
-          model: prep.effectiveModel,
-          email: acc.email
-        },
-        rData,
-        logger.getTimestamp()
-      )
-    } else {
-      logger.logApiResponse(rData, apiTimestamp)
-    }
+    logger.logApiResponse(rData, apiTimestamp)
   }
 
   private async triggerReauth(showToast: ToastFunction): Promise<boolean> {
