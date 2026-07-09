@@ -5,8 +5,12 @@
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const DIST_DIR = resolve(import.meta.dirname, '..', 'dist')
+// import.meta.dirname is Node 20.11+ only; derive it from import.meta.url so the
+// postbuild step also runs on Node 18.
+const scriptDir = dirname(fileURLToPath(import.meta.url))
+const DIST_DIR = resolve(scriptDir, '..', 'dist')
 
 function walk(dir) {
   const results = []
